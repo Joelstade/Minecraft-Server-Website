@@ -10,7 +10,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # downloadables
-public/download/Minecraft/DistantHorizons.sqlite
+public/download/
 
 # OS / editor junk
 .DS_Store
