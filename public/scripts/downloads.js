@@ -20,21 +20,22 @@ async function loadFiles() {
       h2.textContent = folder;
       folderDiv.appendChild(h2);
 
-      data[folder].forEach(file => {
-        const fileDiv = document.createElement('div');
-        fileDiv.className = 'file';
+	  data[folder].forEach(file => {
+	    const fileDiv = document.createElement('div');
+	    fileDiv.className = 'file';
 
-        const img = document.createElement('img');
-        img.src = file.picture ? `/${file.picture}` : '/images/default-file.png';
-        fileDiv.appendChild(img);
+	    const img = document.createElement('img');
+	    img.src = file.picture ? `/${file.picture}` : '/images/default-file.png';
+	    fileDiv.appendChild(img);
 
-        const a = document.createElement('a');
-        a.href = `/download/${folder}/${file.filename}?token=${token}`;
-        a.textContent = `/public/${file.displayName} (${(file.size / 1024).toFixed(1)} KB)`;
-        fileDiv.appendChild(a);
+	    const baseFilename = file.filename.split('/').pop(); // get just the file name
+	    const a = document.createElement('a');
+	    a.href = `/download/${folder}/${baseFilename}?token=${token}`;
+	    a.textContent = `${file.displayName} (${(file.size ? (file.size / 1024).toFixed(1) : '?')} KB)`;
+	    fileDiv.appendChild(a);
 
-        folderDiv.appendChild(fileDiv);
-      });
+	    folderDiv.appendChild(fileDiv);
+	  });
 
       container.appendChild(folderDiv);
     }
