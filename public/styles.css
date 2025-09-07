@@ -1,77 +1,6 @@
-/* Navbar */
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #1a1a1a;
-  padding: 0.5rem 1.5rem;
-  color: white;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-  border-bottom: 2px solid #FF8C42;
-}
-
-.nav-left,
-.nav-right {
-  display: flex;
-  align-items: center;
-}
-
-.nav-link {
-  color: white;
-  text-decoration: none;
-  margin-right: 1.5rem;
-  font-weight: bold;
-}
-
-.nav-link:hover {
-  text-decoration: underline;
-}
-
-/* Login/Register Area */
-.user-area,
-.logged-in-info {
-  display: flex;
-  align-items: center;
-}
-
-.login-form {
-  display: flex;
-  align-items: center;
-  margin-right: 1rem;
-}
-
-.login-form input {
-  margin-right: 0.5rem;
-  padding: 0.3rem 0.5rem;
-  border-radius: 5px;
-  border: none;
-  background-color: #333;
-  color: white;
-}
-
-/* Buttons */
-.btn {
-  padding: 0.4rem 0.8rem;
-  border: none;
-  border-radius: 5px;
-  background-color: #FF8C42;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.btn:hover {
-  background-color: #e67a33;
-}
-
-/* Divider */
-.divider {
-  margin: 0;
-  border-color: #333;
-}
-
-/* Base layout */
+/* ===========================
+   Base Layout
+=========================== */
 body {
   margin: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -83,21 +12,155 @@ body {
   color: white;
 }
 
-#navbar {
-  flex-shrink: 0;
-  z-index: 10;
-}
-
 main {
   flex: 1;
   display: flex;
-  justify-content: center; /* horizontal center */
-  align-items: flex-start; /* start from top */
+  justify-content: center;
+  align-items: flex-start;
   text-align: left;
-  padding: 2rem 0; /* spacing from top */
+  padding: 2rem 0;
 }
 
-/* Content box */
+/* ===========================
+   Navbar
+=========================== */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #1a1a1a;
+  padding: 10px 20px;
+  color: white;
+  font-family: Arial, sans-serif;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  border-bottom: 2px solid #FF8C42;
+  z-index: 10;
+}
+
+.nav-left,
+.nav-right,
+.user-area,
+.logged-in-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nav-left a,
+.nav-link {
+  margin-right: 20px;
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+  transition: color 0.2s;
+}
+
+.nav-left a:hover,
+.nav-link:hover {
+  color: #4CAF50;
+  text-decoration: underline;
+}
+
+/* ===========================
+   Login / Register Inline
+=========================== */
+.login-form {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* spacing between inputs/buttons */
+}
+
+.login-form input {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #555;
+  background-color: #222;
+  color: white;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.login-form input:focus {
+  border-color: #FF8C42;
+  box-shadow: 0 0 5px rgba(255,140,66,0.7);
+}
+
+/* Buttons: Login + Register */
+.login-form button,
+#registerBtn {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.95rem;
+  background-color: #FF8C42; /* orange highlight */
+  color: white;
+  transition: all 0.2s ease-in-out;
+}
+
+.login-form button:hover,
+#registerBtn:hover {
+  background-color: #e67a33;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+
+/* Logout button (secondary style) */
+#logoutBtn {
+  background-color: #333;
+  color: white;
+  padding: 6px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.95rem;
+  transition: all 0.2s ease-in-out;
+}
+
+#logoutBtn:hover {
+  background-color: #444;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+
+/* ===========================
+   Auth Buttons (Login + Register)
+=========================== */
+.auth-btn {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.95rem;
+  background-color: #FF8C42; /* orange highlight */
+  color: white;
+  transition: all 0.2s ease-in-out;
+}
+
+.auth-btn:hover {
+  background-color: #e67a33;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+
+/* Keep inputs aligned nicely with buttons */
+.login-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.login-form .button-group {
+  display: flex;
+  gap: 6px; /* spacing between Login and Register */
+}
+
+/* ===========================
+   Content Box
+=========================== */
 .content-box {
   background-color: rgba(0, 0, 0, 0.8);
   padding: 3rem;
@@ -105,11 +168,10 @@ main {
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
   width: 70%;
   max-width: 1200px;
-  min-height: 120vh; /* at least 1.2 screens */
+  min-height: 120vh;
   overflow-y: auto;
 }
 
-/* Headings */
 .content-box h1 {
   text-align: center;
   font-size: 2.5rem;
@@ -136,7 +198,9 @@ main {
   line-height: 1.6;
 }
 
-/* Lists */
+/* ===========================
+   Lists
+=========================== */
 .content-box ul {
   margin: 0 0 1rem 1.5rem;
   padding: 0;
@@ -152,7 +216,9 @@ main {
   font-size: 1.2rem;
 }
 
-/* Inline code */
+/* ===========================
+   Inline Code
+=========================== */
 .content-box code {
   background: rgba(255, 255, 255, 0.15);
   padding: 3px 6px;
@@ -161,7 +227,9 @@ main {
   color: #FFD966;
 }
 
-/* Links */
+/* ===========================
+   Links
+=========================== */
 .content-box a {
   color: #4DA6FF;
   text-decoration: none;
@@ -173,7 +241,9 @@ main {
   color: #82c3ff;
 }
 
-/* Folder and files */
+/* ===========================
+   Downloads / Files
+=========================== */
 .folder {
   margin-bottom: 2rem;
 }
@@ -210,82 +280,40 @@ main {
   color: #ffe792;
 }
 
-/* Navbar container */
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #1a1a1a;
-  padding: 10px 20px;
-  color: white;
-  font-family: Arial, sans-serif;
+/* ===========================
+   Divider
+=========================== */
+.divider {
+  margin: 0;
+  border-color: #333;
 }
 
-.nav-left a {
-  margin-right: 20px;
-  text-decoration: none;
-  color: white;
+
+/* ===========================
+   Register Page Styling
+=========================== */
+#registerForm.login-form {
+  display: flex;
+  flex-direction: column; /* stack inputs vertically */
+  align-items: stretch;
+  gap: 12px; /* spacing between fields */
+}
+
+#registerForm.login-form label {
   font-weight: bold;
-  transition: color 0.2s;
+  margin-bottom: 4px;
 }
 
-.nav-left a:hover {
-  color: #4caf50;
+#registerForm .button-group {
+  justify-content: flex-start;
+  margin-top: 8px;
 }
 
-.nav-right {
-  display: flex;
-  align-items: center;
-}
-
-/* Login/Register styles */
-.user-area {
-  display: flex;
-  align-items: center;
-}
-
-.login-form {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.input-field {
-  padding: 5px 8px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-}
-
-.btn {
-  padding: 5px 12px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.btn-primary {
-  background-color: #4caf50;
-  color: white;
-}
-
-.btn-primary:hover {
-  background-color: #45a049;
-}
-
-.btn-secondary {
-  background-color: #555;
-  color: white;
-}
-
-.btn-secondary:hover {
-  background-color: #444;
-}
-
-/* Logged-in info */
-.logged-in-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: bold;
+/* Center and resize content box for register page */
+body.register-page main .content-box {
+  width: 400px;        /* realistic form width */
+  max-width: 90%;      /* responsive on smaller screens */
+  margin: 2rem auto;   /* center horizontally */
+  min-height: auto;    /* reduce height for shorter form */
+  padding: 2rem;       /* slightly smaller padding for narrow box */
 }

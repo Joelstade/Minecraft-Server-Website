@@ -1,4 +1,7 @@
 function setupNavbar() {
+  if (window._navbarInitialized) return;
+  window._navbarInitialized = true;
+
   const token = localStorage.getItem('token');
   const loginForm = document.getElementById('loginForm');
   const registerBtn = document.getElementById('registerBtn');
@@ -24,7 +27,7 @@ function setupNavbar() {
 
   // --- LOGIN ---
   loginForm?.addEventListener('submit', async e => {
-    e.preventDefault(); // prevents page reload / URL leak
+    e.preventDefault();
     const data = new FormData(loginForm);
     try {
       const res = await fetch('/api/login', {
@@ -57,22 +60,20 @@ function setupNavbar() {
     userArea.style.display = 'flex';
   });
 
-  // --- REGISTER ---
-  registerBtn?.addEventListener('click', e => {
-    e.preventDefault();
-    loadPage('register');
-    history.pushState({}, "", '/register');
-  });
-
   // --- SPA links in navbar ---
   document.querySelectorAll('#navbar a[data-page]').forEach(link => {
-    link.addEventListener('click', e => {
-      e.preventDefault();
-      const page = link.dataset.page;
-      loadPage(page);
-      history.pushState({}, "", link.getAttribute('href'));
-    });
+    if (!link._listenerAttached) {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        const page = link.dataset.page;
+        loadPage(page);
+        history.pushState({}, '', link.getAttribute('href'));
+      });
+      link._listenerAttached = true;
+    }
   });
+
+  console.log('[INFO] setupNavbar() initialized');
 }
 
 window.setupNavbar = setupNavbar;

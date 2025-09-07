@@ -2,6 +2,7 @@
   <div class="nav-left">
     <a href="/home" data-page="home" class="nav-link">Home</a>
     <a href="/downloads" data-page="downloads" class="nav-link">Downloads</a>
+    <a href="/minecraft-statistics" data-page="minecraft-statistics" class="nav-link">Server Statistics</a>
   </div>
 
   <div class="nav-right">
@@ -9,9 +10,11 @@
       <form id="loginForm" class="login-form">
         <input type="text" name="username" placeholder="Username" required>
         <input type="password" name="password" placeholder="Password" required>
-        <button type="submit">Login</button>
+		<div class="button-group">
+		  <button type="submit" class="auth-btn">Login</button>
+		  <a href="/register" data-page="register" class="nav-link">Register</a>
+		</div>
       </form>
-      <button id="registerBtn" type="button">Register</button>
     </div>
 
     <div id="loggedInInfo" style="display:none;">
