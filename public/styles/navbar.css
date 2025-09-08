@@ -1,0 +1,58 @@
+/* ===========================
+   Navbar
+=========================== */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #1a1a1a;
+  padding: 10px 20px;
+  color: white;
+  font-family: Arial, sans-serif;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  border-bottom: 2px solid #FF8C42;
+  z-index: 10;
+}
+
+.nav-left,
+.nav-right,
+.user-area,
+.logged-in-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nav-left a,
+.nav-link {
+  margin-right: 20px;
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+  transition: color 0.2s;
+}
+
+.nav-left a:hover,
+.nav-link:hover {
+  color: #4CAF50;
+  text-decoration: underline;
+}
+
+/* Logout button */
+#logoutBtn {
+  background-color: #333;
+  color: white;
+  padding: 6px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.95rem;
+  transition: all 0.2s ease-in-out;
+}
+
+#logoutBtn:hover {
+  background-color: #444;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}

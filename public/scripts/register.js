@@ -1,12 +1,10 @@
-attachRegisterButton() 
 initRegisterButton()
+attachRegisterButton() 
 
 function attachRegisterButton() {
   const button = document.getElementById("confirm-registration");
   const form = document.getElementById("registerForm");
   const messageEl = document.getElementById("message");
-
-  console.log("attachRegisterButton called", { button, form, messageEl });
 
   if (!button || !form || !messageEl) {
     console.error("Missing elements:", { button, form, messageEl });
@@ -68,8 +66,6 @@ function attachRegisterButton() {
 function initRegisterButton() {
   const form = document.getElementById("registerForm");
   const button = document.getElementById("confirm-registration");
-
-  console.log("initRegisterButton called", { form, button });
 
   if (form && button) {
     attachRegisterButton();

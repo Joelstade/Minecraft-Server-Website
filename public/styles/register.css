@@ -1,0 +1,34 @@
+register-form-box {
+	width: 100%;
+	align-items: center;
+}
+
+body.register-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.registerFormBox {
+  display: block;
+  width: 100%;
+}
+
+#registerForm.login-form {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch; /* inputs/buttons expand full width */
+  gap: 12px;
+  max-width: 400px;
+  margin: 0 auto;       /* center horizontally if container is wider */
+  
+}
+
+body.register-page main .content-box {
+  width: 400px;
+  max-width: 90%;
+  margin: 2rem auto;
+  min-height: auto;
+  padding: 2rem;
+}
