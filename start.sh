@@ -15,6 +15,9 @@ docker rm -f $PROJECT_NAME 2>/dev/null || true
 # Build Docker image
 docker build -t $PROJECT_NAME .
 
+# Build database using docker-compose.yml
+docker compose up -d --build
+
 # Run container with host mount
 docker run -d \
   --name $PROJECT_NAME \
