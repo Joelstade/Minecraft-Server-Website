@@ -40,11 +40,11 @@ async function handleLoginSubmit(form) {
   };
 
   try {
-	const res = await fetch("/api/login", { // relative URL, same host/port
-	  method: 'POST',
-	  headers: { 'Content-Type': 'application/json' },
-	  body: JSON.stringify(payload)
-	});
+    const res = await fetch("/api/auth/login", { // make sure API route matches
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
 
     const result = await res.json();
     if (res.ok && result.token) {
@@ -67,3 +67,6 @@ function showLoggedIn(username) {
   document.getElementById('loggedInInfo').style.display = 'flex';
   document.getElementById('userArea').style.display = 'none';
 }
+
+// --- Expose login init for SPA loader ---
+window.setupLoginForm = setupLoginForm;

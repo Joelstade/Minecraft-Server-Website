@@ -66,9 +66,9 @@ async function loadLogin() {
     const html = await res.text();
     container.innerHTML = html;
 
-    // Only call setupLoginForm() from login.js
-    if (typeof setupLoginForm === 'function') {
+    if (typeof setupLoginForm === 'function' && !window._loginInitialized) {
       setupLoginForm();
+      window._loginInitialized = true;
     }
 
     console.log('[INFO] Login form loaded');
@@ -91,13 +91,19 @@ async function loadPage(page) {
     const html = await res.text();
     container.innerHTML = html;
 
-    // Load page-specific JS dynamically
+    // Remove previously injected script for this page
     const existingScript = document.querySelector(`script[data-page="${page}"]`);
     if (existingScript) existingScript.remove();
 
+    // Load page-specific JS
     const script = document.createElement('script');
     script.src = `/scripts/${page}.js`;
     script.dataset.page = page;
+    script.onload = () => {
+      // Initialize page-specific buttons/forms
+      if (page === 'login' && typeof setupLoginForm === 'function') setupLoginForm();
+      if (page === 'register' && typeof initRegisterButton === 'function') initRegisterButton();
+    };
     document.body.appendChild(script);
 
     console.log(`[INFO] Page loaded: ${page}`);
@@ -141,7 +147,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadLogin();
   setupSPALinks();
 
-  // Load initial page
+  // Load initial page based on URL
   const page = window.location.pathname.replace(/^\//, '') || 'home';
   loadPage(page);
 });
