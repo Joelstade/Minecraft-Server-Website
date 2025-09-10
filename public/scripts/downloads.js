@@ -4,15 +4,27 @@ async function loadFiles() {
   if (!token) return;
 
   try {
-    const res = await fetch('/api/files?token=' + token);
+    const res = await fetch('/api/files?token=' + encodeURIComponent(token));
     if (!res.ok) throw new Error("Failed to fetch files");
-    const data = await res.json();
+    const files = await res.json();
 
     const container = document.getElementById('downloadsList');
     if (!container) return;
     container.innerHTML = '';
 
-    for (const folder in data) {
+    // Group files by folder
+    const grouped = {};
+    files.forEach(file => {
+      if (!file.folder || !file.name) {
+        console.warn('Skipping invalid file entry:', file);
+        return;
+      }
+      if (!grouped[file.folder]) grouped[file.folder] = [];
+      grouped[file.folder].push(file);
+    });
+
+    // Render folders and files
+    for (const folder in grouped) {
       const folderDiv = document.createElement('div');
       folderDiv.className = 'folder';
 
@@ -20,27 +32,27 @@ async function loadFiles() {
       h2.textContent = folder;
       folderDiv.appendChild(h2);
 
-	  data[folder].forEach(file => {
-	    const fileDiv = document.createElement('div');
-	    fileDiv.className = 'file';
+      grouped[folder].forEach(file => {
+        const fileDiv = document.createElement('div');
+        fileDiv.className = 'file';
 
-	    const img = document.createElement('img');
-	    img.src = file.picture ? `/${file.picture}` : '/images/default-file.png';
-	    fileDiv.appendChild(img);
+        // Default icon
+        const img = document.createElement('img');
+        img.src = '/images/default-file.png';
+        fileDiv.appendChild(img);
 
-	    const baseFilename = file.filename.split('/').pop(); // get just the file name
-	    const a = document.createElement('a');
-	    a.href = `/download/${folder}/${baseFilename}?token=${token}`;
-	    a.textContent = `${file.displayName} (${(file.size ? (file.size / 1024).toFixed(1) : '?')} KB)`;
-	    fileDiv.appendChild(a);
+        const a = document.createElement('a');
+        a.href = `/download/${encodeURIComponent(file.folder)}/${encodeURIComponent(file.name)}?token=${encodeURIComponent(token)}`;
+        a.textContent = file.name;
+        fileDiv.appendChild(a);
 
-	    folderDiv.appendChild(fileDiv);
-	  });
+        folderDiv.appendChild(fileDiv);
+      });
 
       container.appendChild(folderDiv);
     }
   } catch (err) {
-    console.error(err);
+    console.error('Error loading files:', err);
     const container = document.getElementById('downloadsList');
     if (container) container.textContent = "Failed to load files.";
   }

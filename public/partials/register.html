@@ -1,28 +1,26 @@
-<body class="register-page">
-  <main>
-    <div class="content-box">
-      <h1>Register</h1>
-	  <div class="register-form-box">
-	      <form id="registerForm" class="login-form">
-	        <label for="username">Username</label>
-	        <input type="text" name="username" id="username" required>
-	
-	        <label for="email">Email</label>
-	        <input type="email" name="email" id="email" required>
-	
-	        <label for="password">Password</label>
-	        <input type="password" name="password" id="password" required>
-	
-			<div class="button-group">
-			  <button type="button" id="confirm-registration" class="auth-btn">Register</button>
-			</div>
-		</div>
+<main>
+  <div class="content-box">
+    <h1>Register</h1>
+
+    <div class="register-form-box">
+      <form id="registerForm">
+        <label for="username">Username</label>
+        <input type="text" name="username" id="username" required>
+
+        <label for="email">Email</label>
+        <input type="email" name="email" id="email" required>
+
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password" required>
+
+        <div class="button-group">
+          <button type="button" id="confirm-registration">Register</button>
+        </div>
       </form>
-
-      <p id="message"></p>
-
     </div>
-  </main>
-  <script src="/scripts/register.js"></script>
-</body>
-</html>
+
+    <p id="message"></p>
+  </div>
+</main>
+
+<script src="/scripts/register.js"></script>

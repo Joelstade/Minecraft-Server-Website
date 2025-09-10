@@ -1,67 +1,25 @@
+async function loadNavbar() {
+  const container = document.getElementById('nav-left-container');
+  if (!container) return;
+
+  try {
+    const res = await fetch('/partials/navbar.html');
+    if (!res.ok) throw new Error('Failed to fetch navbar.html');
+    container.innerHTML = await res.text();
+
+    // SPA link handling
+    setupNavbar();
+  } catch (err) {
+    console.error('Navbar load failed:', err);
+    container.innerHTML = '<p>Navbar failed to load</p>';
+  }
+}
+
 function setupNavbar() {
   if (window._navbarInitialized) return;
   window._navbarInitialized = true;
 
-  const token = localStorage.getItem('token');
-  const loginForm = document.getElementById('loginForm');
-  const registerBtn = document.getElementById('registerBtn');
-  const loggedInInfo = document.getElementById('loggedInInfo');
-  const currentUser = document.getElementById('currentUser');
-  const logoutBtn = document.getElementById('logoutBtn');
-  const userArea = document.getElementById('userArea');
-
-  function showLoggedIn(username) {
-    currentUser.textContent = username;
-    loggedInInfo.style.display = 'flex';
-    userArea.style.display = 'none';
-  }
-
-  if (token) {
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      showLoggedIn(payload.username);
-    } catch {
-      localStorage.removeItem('token');
-    }
-  }
-
-  // --- LOGIN ---
-  loginForm?.addEventListener('submit', async e => {
-    e.preventDefault();
-    const data = new FormData(loginForm);
-    try {
-      const res = await fetch('/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          username: data.get('username'),
-          password: data.get('password')
-        })
-      });
-      const result = await res.json();
-      if (res.ok) {
-        localStorage.setItem('token', result.token);
-        const payload = JSON.parse(atob(result.token.split('.')[1]));
-        showLoggedIn(payload.username);
-        loginForm.reset();
-      } else {
-        alert(result.message || 'Login failed');
-      }
-    } catch (err) {
-      console.error(err);
-      alert('Login error');
-    }
-  });
-
-  // --- LOGOUT ---
-  logoutBtn?.addEventListener('click', () => {
-    localStorage.removeItem('token');
-    loggedInInfo.style.display = 'none';
-    userArea.style.display = 'flex';
-  });
-
-  // --- SPA links in navbar ---
-  document.querySelectorAll('#navbar a[data-page]').forEach(link => {
+  document.querySelectorAll('#nav-left-container a[data-page]').forEach(link => {
     if (!link._listenerAttached) {
       link.addEventListener('click', e => {
         e.preventDefault();
@@ -76,4 +34,5 @@ function setupNavbar() {
   console.log('[INFO] setupNavbar() initialized');
 }
 
+window.loadNavbar = loadNavbar;
 window.setupNavbar = setupNavbar;

@@ -9,7 +9,7 @@ COPY package*.json ./
 RUN npm install --production
 COPY . .
 
-EXPOSE 443
+EXPOSE 883
 
 # Run app
-CMD ["npm", "start"]
+CMD ["node", "server.js"]

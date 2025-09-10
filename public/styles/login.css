@@ -1,0 +1,75 @@
+/* ===========================
+   Login
+=========================== */
+.login-form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.login-form input {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #555;
+  background-color: #2a2a2a;
+  color: white;
+  font-size: 0.9rem;
+}
+
+.login-form input::placeholder {
+  color: #aaa;
+}
+
+.auth-btn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 6px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.95rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.auth-btn:hover {
+  background-color: #45a049;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+
+/* Logout button */
+#logoutBtn {
+  background-color: #333;
+  color: white;
+  padding: 6px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.95rem;
+  transition: all 0.2s ease-in-out;
+}
+
+#logoutBtn:hover {
+  background-color: #444;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+
+.button-group {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* space between login button and register link */
+}
+
+.register-link {
+  color: #fff;
+  text-decoration: underline;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.register-link:hover {
+  color: #4CAF50;
+}

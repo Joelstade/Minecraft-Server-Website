@@ -1,16 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-	  <meta charset="UTF-8">
-	  <title>My Website</title>
-	  <link rel="stylesheet" href="styles/layout.css">
-	  <link rel="stylesheet" href="styles/navbar.css">
-	  <link rel="stylesheet" href="styles/downloads.css">
-	  <link rel="stylesheet" href="styles/register.css">
-	</head>
-	<body>
-	  <div id="navbar"></div>
-	  <main id="content"></main>
-		<script src="scripts/layout.js"></script>
-	</body>
+
+<head>
+  <meta charset="UTF-8">
+  <title>My Website</title>
+  <link rel="stylesheet" href="/styles/layout.css">
+  <link rel="stylesheet" href="/styles/navbar.css">
+  <link rel="stylesheet" href="/styles/login.css">
+</head>
+
+<body>
+  <nav class="navbar" id="navbar">
+    <!-- Left links injected here -->
+    <div id="nav-left-container"></div>
+
+    <!-- Right login area -->
+    <div class="nav-right">
+      <div id="login-container"></div>
+    </div>
+  </nav>
+
+  <main id="content"></main>
+
+  <!-- Scripts -->
+  <script src="/scripts/layout.js"></script>
+  <script src="/scripts/navbar.js"></script>
+  <script src="/scripts/login.js"></script>
+</body>
+
 </html>

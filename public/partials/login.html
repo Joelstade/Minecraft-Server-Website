@@ -1,8 +1,16 @@
-div class="content-box">
-  <h1>Login</h1>
+<div id="userArea">
   <form id="loginForm" class="login-form">
     <input type="text" name="username" placeholder="Username" required>
     <input type="password" name="password" placeholder="Password" required>
-    <button type="submit" class="btn">Login</button>
+
+    <div class="button-group">
+      <button type="submit" class="btn">Login</button>
+      <a href="/register" data-page="register" class="register-link">Register</a>
+    </div>
   </form>
+</div>
+
+<div id="loggedInInfo" style="display:none;">
+  <span>Logged in as: <b id="currentUser"></b></span>
+  <button id="logoutBtn" type="button">Logout</button>
 </div>
