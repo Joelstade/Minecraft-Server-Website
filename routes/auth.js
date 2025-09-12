@@ -1,9 +1,10 @@
+// routes/auth.js
+// Handles /api/auth endpoints
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
-
-// Rate limiter (optional)
 const rateLimit = require('express-rate-limit');
+
 const loginLimiter = rateLimit({
   windowMs: 5 * 60 * 1000,
   max: 5,

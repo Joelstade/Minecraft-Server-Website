@@ -1,37 +1,29 @@
-// --- Setup login form ---
+// --- login.js ---
+// Handles SPA login form, logout, and session restoration using cookies
+
+window.loginLoaded = window.loginLoaded || false;
+
+// Attach login + logout listeners
 function setupLoginForm() {
   const form = document.getElementById('loginForm');
   const logoutBtn = document.getElementById('logoutBtn');
   if (!form || !logoutBtn) return;
 
-  // Restore token if present
-  const token = localStorage.getItem('token');
-  if (token) {
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      showLoggedIn(payload.username);
-    } catch {
-      localStorage.removeItem('token');
-    }
-  }
-
-  // Remove old listeners to prevent duplicates
   form.onsubmit = null;
   logoutBtn.onclick = null;
 
-  form.addEventListener('submit', e => {
+  form.addEventListener('submit', async e => {
     e.preventDefault();
-    handleLoginSubmit(form);
+    await handleLoginSubmit(form);
   });
 
-  logoutBtn.addEventListener('click', () => {
-    localStorage.removeItem('token');
-    document.getElementById('loggedInInfo').style.display = 'none';
-    document.getElementById('userArea').style.display = 'flex';
+  logoutBtn.addEventListener('click', async () => {
+    await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+    showLoggedOut();
   });
 }
 
-// --- Handle login submit ---
+// Handle login submission; token is now in HttpOnly cookie
 async function handleLoginSubmit(form) {
   const data = new FormData(form);
   const payload = {
@@ -40,18 +32,19 @@ async function handleLoginSubmit(form) {
   };
 
   try {
-    const res = await fetch("/api/auth/login", { // make sure API route matches
+    const res = await fetch("/api/auth/login", {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
+      credentials: 'include' // ensures cookies are sent/received
     });
 
     const result = await res.json();
-    if (res.ok && result.token) {
-      localStorage.setItem('token', result.token);
-      const payloadDecoded = JSON.parse(atob(result.token.split('.')[1]));
-      showLoggedIn(payloadDecoded.username);
+
+    if (res.ok) {
+      showLoggedIn(result.user.username);
       form.reset();
+      window.dispatchEvent(new Event('loginSuccess'));
     } else {
       alert(result.message || 'Login failed');
     }
@@ -61,12 +54,51 @@ async function handleLoginSubmit(form) {
   }
 }
 
-// --- Show logged-in user ---
+// Display logged-in state
 function showLoggedIn(username) {
-  document.getElementById('currentUser').textContent = username;
-  document.getElementById('loggedInInfo').style.display = 'flex';
-  document.getElementById('userArea').style.display = 'none';
+  const loggedInInfo = document.getElementById('loggedInInfo');
+  const userArea = document.getElementById('userArea');
+  const currentUser = document.getElementById('currentUser');
+
+  if (!loggedInInfo || !userArea || !currentUser) return;
+
+  currentUser.textContent = username;
+  loggedInInfo.style.display = 'flex';
+  userArea.style.display = 'none';
 }
 
-// --- Expose login init for SPA loader ---
+// Display logged-out state
+function showLoggedOut() {
+  const loggedInInfo = document.getElementById('loggedInInfo');
+  const userArea = document.getElementById('userArea');
+
+  if (!loggedInInfo || !userArea) return;
+
+  loggedInInfo.style.display = 'none';
+  userArea.style.display = 'flex';
+}
+
+// Load login partial and attach listeners
+async function loadLogin() {
+  if (window.loginLoaded) return;
+  window.loginLoaded = true;
+
+  const container = document.getElementById('login-container');
+  if (!container) return;
+
+  try {
+    const res = await fetch('/partials/login.html');
+    if (!res.ok) throw new Error(`Failed to fetch login.html (status ${res.status})`);
+    const html = await res.text();
+    container.innerHTML = html;
+
+    setupLoginForm();
+    console.log('[INFO] Login form loaded');
+  } catch (err) {
+    console.error('Login load failed:', err);
+    container.innerHTML = '<p>Login failed to load</p>';
+  }
+}
+
 window.setupLoginForm = setupLoginForm;
+window.loadLogin = loadLogin;

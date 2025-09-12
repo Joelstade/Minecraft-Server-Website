@@ -33,6 +33,50 @@ function setupNavbar() {
 
   console.log('[INFO] setupNavbar() initialized');
 }
+// ---------------------
+// Load Navbar (left links)
+// ---------------------
+async function loadNavbar() {
+  if (navbarLoaded) return;
+  navbarLoaded = true;
+
+  const container = document.getElementById('nav-left-container');
+  if (!container) return;
+
+  try {
+    const res = await fetch('/partials/navbar.html');
+    if (!res.ok) throw new Error(`Failed to fetch navbar.html (status ${res.status})`);
+    const html = await res.text();
+    container.innerHTML = html;
+
+    setupNavbar();
+    console.log('[INFO] Navbar loaded');
+  } catch (err) {
+    console.error('Navbar load failed:', err);
+    container.innerHTML = '<p>Navbar failed to load</p>';
+  }
+}
+
+// ---------------------
+// Setup SPA links in navbar
+// ---------------------
+function setupNavbar() {
+  if (window._navbarInitialized) return;
+  window._navbarInitialized = true;
+
+  document.querySelectorAll('#nav-left-container a[data-page]').forEach(link => {
+    if (!link._listenerAttached) {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        loadPage(link.dataset.page);
+        history.pushState({}, '', link.getAttribute('href'));
+      });
+      link._listenerAttached = true;
+    }
+  });
+
+  console.log('[INFO] setupNavbar() initialized');
+}
 
 window.loadNavbar = loadNavbar;
 window.setupNavbar = setupNavbar;

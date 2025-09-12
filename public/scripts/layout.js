@@ -1,121 +1,39 @@
 // =====================
+// layout.js
 // SPA Layout Loader
 // =====================
 
 let navbarLoaded = false;
 let loginLoaded = false;
 
-// ---------------------
-// Load Navbar (left links)
-// ---------------------
-async function loadNavbar() {
-  if (navbarLoaded) return;
-  navbarLoaded = true;
-
-  const container = document.getElementById('nav-left-container');
-  if (!container) return;
-
-  try {
-    const res = await fetch('/partials/navbar.html');
-    if (!res.ok) throw new Error(`Failed to fetch navbar.html (status ${res.status})`);
-    const html = await res.text();
-    container.innerHTML = html;
-
-    setupNavbar();
-    console.log('[INFO] Navbar loaded');
-  } catch (err) {
-    console.error('Navbar load failed:', err);
-    container.innerHTML = '<p>Navbar failed to load</p>';
-  }
-}
-
-// ---------------------
-// Setup SPA links in navbar
-// ---------------------
-function setupNavbar() {
-  if (window._navbarInitialized) return;
-  window._navbarInitialized = true;
-
-  document.querySelectorAll('#nav-left-container a[data-page]').forEach(link => {
-    if (!link._listenerAttached) {
-      link.addEventListener('click', e => {
-        e.preventDefault();
-        loadPage(link.dataset.page);
-        history.pushState({}, '', link.getAttribute('href'));
-      });
-      link._listenerAttached = true;
-    }
-  });
-
-  console.log('[INFO] setupNavbar() initialized');
-}
-
-// ---------------------
-// Load Login (right part)
-// ---------------------
-async function loadLogin() {
-  if (loginLoaded) return;
-  loginLoaded = true;
-
-  const container = document.getElementById('login-container');
-  if (!container) return;
-
-  try {
-    const res = await fetch('/partials/login.html');
-    if (!res.ok) throw new Error(`Failed to fetch login.html (status ${res.status})`);
-    const html = await res.text();
-    container.innerHTML = html;
-
-    if (typeof setupLoginForm === 'function' && !window._loginInitialized) {
-      setupLoginForm();
-      window._loginInitialized = true;
-    }
-
-    console.log('[INFO] Login form loaded');
-  } catch (err) {
-    console.error('Login load failed:', err);
-    container.innerHTML = '<p>Login failed to load</p>';
-  }
-}
-
-// ---------------------
-// SPA Page Loader
-// ---------------------
+// Load a partial page into #content
 async function loadPage(page) {
-  const container = document.getElementById('content');
-  if (!container) return;
+  const main = document.getElementById('content');
+  if (!main) return;
+
+  main.innerHTML = "Loading...";
 
   try {
     const res = await fetch(`/partials/${page}.html`);
-    if (!res.ok) throw new Error(`Failed to load page: ${page} (status ${res.status})`);
+    if (!res.ok) throw new Error("Page not found");
     const html = await res.text();
-    container.innerHTML = html;
+    main.innerHTML = html;
 
-    // Remove previously injected script for this page
-    const existingScript = document.querySelector(`script[data-page="${page}"]`);
-    if (existingScript) existingScript.remove();
+    // Page-specific initialization
+    if (page === 'downloads' && typeof setupDownloadsSPA === 'function') {
+      setupDownloadsSPA();
+    }
+    if (page === 'register' && typeof setupRegisterForm === 'function') {
+      setupRegisterForm();
+    }
 
-    // Load page-specific JS
-    const script = document.createElement('script');
-    script.src = `/scripts/${page}.js`;
-    script.dataset.page = page;
-    script.onload = () => {
-      // Initialize page-specific buttons/forms
-      if (page === 'login' && typeof setupLoginForm === 'function') setupLoginForm();
-      if (page === 'register' && typeof initRegisterButton === 'function') initRegisterButton();
-    };
-    document.body.appendChild(script);
-
-    console.log(`[INFO] Page loaded: ${page}`);
   } catch (err) {
-    console.error(err);
-    container.innerHTML = '<h2>Page not found</h2>';
+    console.error('Failed to load page:', err);
+    main.textContent = "Failed to load page.";
   }
 }
 
-// ---------------------
-// SPA Link Handling
-// ---------------------
+// Setup SPA navigation links
 function setupSPALinks() {
   if (window._spaNavAttached) return;
   window._spaNavAttached = true;
@@ -131,23 +49,19 @@ function setupSPALinks() {
   });
 }
 
-// ---------------------
-// Browser Back/Forward
-// ---------------------
+// Handle browser back/forward buttons
 window.addEventListener('popstate', () => {
   const page = window.location.pathname.replace(/^\//, '') || 'home';
   loadPage(page);
 });
 
-// ---------------------
-// Initialize SPA
-// ---------------------
+// Initialize SPA: load navbar, login, register forms and setup links
 document.addEventListener('DOMContentLoaded', async () => {
   await loadNavbar();
   await loadLogin();
+  await loadRegister();
   setupSPALinks();
 
-  // Load initial page based on URL
   const page = window.location.pathname.replace(/^\//, '') || 'home';
   loadPage(page);
 });

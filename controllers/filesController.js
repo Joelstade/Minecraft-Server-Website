@@ -1,35 +1,48 @@
-const pool = require('../config/db');
+// controllers/filesController
 
+require('dotenv').config();
+const jwt = require('jsonwebtoken');
+
+// controllers/filesController.js
+const { pool } = require('../config/db'); // your PG pool
+
+// GET /api/files
 exports.getFiles = async (req, res) => {
-  console.log('[API FILES] Fetching files for user:', req.user?.username);
+  const userId = req.user && req.user.id;
+  if (!userId) return res.status(401).json({ token: 'Unauthorized' });
 
   try {
-    const result = await pool.query("SELECT id, folder, name, uploaded_at FROM files ORDER BY id DESC");
-    console.log('[API FILES] Retrieved rows:', result.rows.length);
+    const sql = `
+      SELECT f.id, f.name, f.folder, f.uploaded_at
+      FROM files f
+      WHERE f.user_id = $1
+      ORDER BY f.uploaded_at DESC
+    `;
+    const result = await pool.query(sql, [userId]);
     res.json(result.rows);
   } catch (err) {
-    console.error('[API FILES] Failed to fetch files:', err);
-    res.status(500).json({ message: 'Failed to fetch files' });
+    console.error('[FILES] getFiles error:', err);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 
+/* POST /api/files
 exports.addFile = async (req, res) => {
-  const { name, folder } = req.body;
+  const userId = req.user && req.user.id;
+  if (!userId) return res.status(401).json({ message: 'Unauthorized' });
 
-  if (!name || !folder) {
-    console.warn('[API FILES] Missing name or folder:', { name, folder });
-    return res.status(400).json({ message: "Missing fields" });
-  }
+  const { name, folder } = req.body;
+  if (!name || !folder) return res.status(400).json({ message: 'Missing name or folder' });
 
   try {
-    const result = await pool.query(
-      "INSERT INTO files (name, folder) VALUES ($1, $2) RETURNING *",
-      [name, folder]
+    await pool.query(
+      'INSERT INTO files(name, folder, user_id) VALUES($1, $2, $3)',
+      [name, folder, userId]
     );
-    console.log('[API FILES] Added new file:', result.rows[0]);
-    res.json(result.rows[0]);
+    res.json({ message: 'File added' });
   } catch (err) {
-    console.error('[API FILES] Failed to insert file:', err);
-    res.status(500).json({ message: "Failed to insert file" });
+    console.error('[FILES] addFile error:', err);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
+*/

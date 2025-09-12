@@ -3,7 +3,7 @@ require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
 const chokidar = require('chokidar'); // File watcher
-const pool = require('./config/db'); // Your PG pool
+const { pool } = require('./config/db'); // Your PG pool
 
 const DOWNLOADS_DIR = path.join(__dirname, 'downloads'); // Adjust if mounted elsewhere
 

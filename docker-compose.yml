@@ -7,12 +7,22 @@ services:
     ports:
       - "883:883"
     volumes:
-      - ./downloads:/usr/src/app/downloads
+      - ./downloads:/usr/src/app/downloads   # Host <-> container sync
     environment:
       DATABASE_URL: postgres://postgres:supersecret@db:5432/app_db
+    user: "${MY_UID}:${MY_GID}"             # Run container as host user
     depends_on:
       - db
-
+  scan:
+      build: .
+      container_name: my-file-scanner
+      volumes:
+        - ./downloads:/usr/src/app/downloads
+      command: node scanFiles.js
+      environment:
+        DATABASE_URL: postgres://postgres:supersecret@db:5432/app_db
+      depends_on:
+        - db
   db:
     image: postgres:15
     container_name: Minecraft-Server-Website-db
@@ -22,7 +32,7 @@ services:
       POSTGRES_DB: app_db
     volumes:
       - db_data:/var/lib/postgresql/data
-      - ./db-init:/docker-entrypoint-initdb.d  # <-- Mount init scripts here
+      - ./db-init:/docker-entrypoint-initdb.d
     ports:
       - "5432:5432"
 
