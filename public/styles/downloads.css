@@ -1,38 +1,56 @@
-/* ===========================
-   Downloads / Files
-=========================== */
+/* Downloads container */
 .folder {
-  margin-bottom: 2rem;
+  margin-bottom: 24px;
 }
 
+.folder h2 {
+  color: #FF8C42;
+  border-bottom: 1px solid #FF8C42;
+  padding-bottom: 4px;
+  font-size: 1.2rem;
+}
+
+/* Individual file item */
 .file {
   display: flex;
   align-items: center;
-  margin: 0.5rem 0;
-  padding: 0.6rem;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 8px;
-  transition: background 0.2s ease-in-out;
-}
-
-.file:hover {
-  background: rgba(255, 255, 255, 0.15);
-}
-
-.file img {
-  width: 50px;
-  height: 50px;
-  margin-right: 1rem;
+  margin-top: 8px;
+  background-color: #1a1a1a;
+  padding: 8px;
   border-radius: 6px;
+  color: white;
 }
 
-.file a {
-  color: #FFD966;
-  font-weight: bold;
+.file-icon {
+  width: 32px;
+  height: 32px;
+  margin-right: 12px;
+}
+
+.file-link {
+  flex: 1;
+  color: #FF8C42;
   text-decoration: none;
+  word-break: break-word;
 }
 
-.file a:hover {
-  text-decoration: underline;
-  color: #ffe792;
+/* Progress bar */
+.progress-bar-container {
+  flex-basis: 150px;
+  height: 8px;
+  background-color: #333;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-left: 12px;
 }
+
+.progress-bar {
+  width: 0;
+  height: 100%;
+  background-color: #FF8C42;
+  transition: width 0.1s;
+  text-align: center;
+  font-size: 10px;
+  line-height: 8px;
+  color: white;
+  transition: width 0.3s ease-out;

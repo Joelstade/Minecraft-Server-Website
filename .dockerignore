@@ -1,6 +1,7 @@
 # Ignore local downloads
 downloads/
 downloads/*
+downloadstemp/*
 
 # Node junk
 node_modules/

@@ -1,15 +1,10 @@
-// controllers/filesController
-
-require('dotenv').config();
-const jwt = require('jsonwebtoken');
-
 // controllers/filesController.js
 const { pool } = require('../config/db'); // your PG pool
 
 // GET /api/files
 exports.getFiles = async (req, res) => {
   const userId = req.user && req.user.id;
-  if (!userId) return res.status(401).json({ token: 'Unauthorized' });
+  if (!userId) return res.status(401).json({ message: 'Unauthorized' });
 
   try {
     const sql = `

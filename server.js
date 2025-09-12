@@ -1,43 +1,60 @@
-// server.js
-//
 require('dotenv').config();
 const path = require('path');
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
+const https = require('https');
+const http = require('http');
+const fs = require('fs');
 
 const app = express();
 
 // Middleware
-app.use(express.json()); // parse JSON request bodies
-app.use(cookieParser());  // parse cookies
+app.use(express.json());
+app.use(cookieParser());
 
-// CORS for SPA if needed
+// CORS for SPA
 app.use(cors({
-  origin: 'http://localhost:3000', // change to your SPA origin
-  credentials: true               // allow cookies to be sent
+  origin: ['https://create.scienceontheweb.net'], // use HTTPS only
+  credentials: true
 }));
 
 // Serve static files
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/', express.static(path.join(__dirname, 'public', 'partials')));
 
 // API routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/files', require('./routes/files'));
+app.use('/routeDownloads', require('./routes/routeDownloads'));
 
-// Downloads routes
-app.use('/downloads', require('./routes/downloads'));
-
-// SPA fallback for non-API routes
+// SPA fallback
+app.get(['/downloads', '/register', '/home'], (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'layout.html'));
+});
 app.use((req, res, next) => {
   if (req.path.startsWith('/api') || req.path.startsWith('/partials')) return next();
   res.sendFile(path.join(__dirname, 'public', 'layout.html'));
 });
 
-// Start server
-const PORT = process.env.PORT || 883;
-app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+// HTTPS server
+const httpsOptions = {
+  key: fs.readFileSync('/certs/privkey.pem'),
+  cert: fs.readFileSync('/certs/fullchain.pem')
+};
+
+https.createServer(httpsOptions, app).listen(443, () => {
+  console.log('✅ HTTPS server running on port 443');
+});
+
+// HTTP → HTTPS redirect
+const httpApp = express();
+httpApp.use((req, res) => {
+  const host = req.headers.host.replace(/:\d+$/, '');
+  res.redirect(`https://${host}${req.url}`);
+});
+http.createServer(httpApp).listen(80, () => {
+  console.log('➡️ HTTP redirecting to HTTPS on port 80');
+});
 
 // Optional: database utilities
 const { pool, printFilesTree } = require('./config/db');

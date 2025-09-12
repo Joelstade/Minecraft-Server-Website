@@ -5,3 +5,4 @@ downloads/
 .metadata/
 users.json
 .DS_Store
+certs/

@@ -9,7 +9,7 @@ async function loadFiles() {
   if (!container) return;
 
   try {
-    const res = await fetch(`/downloads`, { credentials: 'include' });
+    const res = await fetch(`/api/files`, { credentials: 'include' });
     if (!res.ok) throw new Error(`Failed to load files (status ${res.status})`);
 
     const files = await res.json();
@@ -24,6 +24,7 @@ async function loadFiles() {
 function renderFiles(files, container) {
   container.innerHTML = '';
 
+  // Group files by folder
   const grouped = {};
   files.forEach(file => {
     if (!file.folder || !file.name) return;
@@ -45,34 +46,73 @@ function renderFiles(files, container) {
 
       const img = document.createElement('img');
       img.src = '/images/default-file.png';
+      img.className = 'file-icon';
       fileDiv.appendChild(img);
 
       const a = document.createElement('a');
-      a.href = `/downloads/${encodeURIComponent(file.folder)}/${encodeURIComponent(file.name)}`;
+      a.href = `/routeDownloads/${encodeURIComponent(file.folder)}/${encodeURIComponent(file.name)}`;
       a.textContent = file.name;
-
-      // Click to download using cookie-based auth
-      a.addEventListener('click', async e => {
-        e.preventDefault();
-        try {
-          const res = await fetch(a.href, { credentials: 'include' });
-          if (!res.ok) throw new Error(`Download failed: ${res.status}`);
-
-          const blob = await res.blob();
-          const url = URL.createObjectURL(blob);
-
-          const link = document.createElement('a');
-          link.href = url;
-          link.download = file.name;
-          link.click();
-          URL.revokeObjectURL(url);
-        } catch (err) {
-          console.error('Download error:', err);
-          alert('Failed to download file.');
-        }
-      });
-
+      a.className = 'file-link';
       fileDiv.appendChild(a);
+
+      // Progress bar container
+      const progressContainer = document.createElement('div');
+      progressContainer.className = 'progress-bar-container';
+      const progressBar = document.createElement('div');
+      progressBar.className = 'progress-bar';
+      progressContainer.appendChild(progressBar);
+      fileDiv.appendChild(progressContainer);
+
+      // Click to download
+	  a.addEventListener('click', async e => {
+	    e.preventDefault();
+	    progressBar.style.width = '0%';
+	    progressBar.textContent = '';
+
+	    try {
+	      const res = await fetch(a.href, { credentials: 'include' });
+	      if (!res.ok) throw new Error(`Download failed: ${res.status}`);
+
+	      const reader = res.body.getReader();
+	      const contentLength = +res.headers.get('Content-Length') || 0;
+	      let receivedLength = 0;
+	      const chunks = [];
+
+		  let displayedPercent = 0;
+
+		  while (true) {
+		    const { done, value } = await reader.read();
+		    if (done) break;
+		    chunks.push(value);
+		    receivedLength += value.byteLength;
+
+		    if (contentLength) {
+		      const targetPercent = Math.floor((receivedLength / contentLength) * 100);
+		      // Smooth: move displayedPercent halfway to target
+		      displayedPercent += (targetPercent - displayedPercent) * 0.3;
+		      progressBar.style.width = displayedPercent.toFixed(1) + '%';
+		      progressBar.textContent = Math.floor(displayedPercent) + '%';
+		    }
+		  }
+
+	      const blob = new Blob(chunks);
+	      const url = URL.createObjectURL(blob);
+	      const link = document.createElement('a');
+	      link.href = url;
+	      link.download = file.name;
+	      link.click();
+	      URL.revokeObjectURL(url);
+
+	      progressBar.style.width = '0%';
+	      progressBar.textContent = '';
+	    } catch (err) {
+	      console.error('Download error:', err);
+	      alert('Failed to download file.');
+	      progressBar.style.width = '0%';
+	      progressBar.textContent = '';
+	    }
+	  });
+
       folderDiv.appendChild(fileDiv);
     });
 
@@ -83,7 +123,7 @@ function renderFiles(files, container) {
 // Setup Downloads SPA page behavior
 async function setupDownloadsSPA() {
   await waitForContainer('#downloadsList');
-  loadFiles();
+  await loadFiles();
   window.addEventListener('loginSuccess', loadFiles);
 }
 
@@ -105,6 +145,6 @@ function waitForContainer(selector) {
   });
 }
 
-// Expose functions to SPA
+// Expose functions globally
 window.loadFiles = loadFiles;
 window.setupDownloadsSPA = setupDownloadsSPA;

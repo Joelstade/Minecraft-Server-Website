@@ -100,5 +100,30 @@ async function loadLogin() {
   }
 }
 
+async function restoreSession() {
+  try {
+    const res = await fetch('/api/auth/me', { credentials: 'include' });
+    if (!res.ok) throw new Error('No active session');
+
+    const data = await res.json();
+    showLoggedIn(data.user.username);
+    window.dispatchEvent(new Event('loginSuccess'));
+  } catch {
+    showLoggedOut();
+  }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadNavbar();
+  await loadLogin();
+  await loadRegister();
+  setupSPALinks();
+
+  await restoreSession(); // <- restore login before loading page
+
+  const page = window.location.pathname.replace(/^\//, '') || 'home';
+  await loadPage(page);
+});
+
 window.setupLoginForm = setupLoginForm;
 window.loadLogin = loadLogin;

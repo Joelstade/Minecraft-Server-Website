@@ -2,13 +2,13 @@ FROM node:18-alpine
 
 WORKDIR /usr/src/app
 
-# Downloads folder
-RUN mkdir -p /usr/src/app/downloads
-
+# Install dependencies
 COPY package*.json ./
 RUN npm install --production
+
+# Copy source code
 COPY . .
 
-EXPOSE 883
+EXPOSE 80 443
 
 CMD ["node", "server.js"]

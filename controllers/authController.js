@@ -83,10 +83,12 @@ async function activate(req, res) {
   }
 }
 
-// --- Login (cookie-based JWT) ---
+// --- Login (cookie-based JWT, HTTPS only) ---
 async function login(req, res) {
   const { username, password } = req.body;
-  if (!username || !password) return res.status(400).json({ success: false, message: 'Missing username or password' });
+  if (!username || !password) {
+    return res.status(400).json({ success: false, message: 'Missing username or password' });
+  }
 
   try {
     const userRes = await pool.query('SELECT * FROM users WHERE username=$1', [username]);
@@ -102,11 +104,11 @@ async function login(req, res) {
       { expiresIn: '12h' }
     );
 
-    // Set HttpOnly cookie
+    // Enforce HTTPS-only cookies in production
     res.cookie('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'Strict',
+      secure: true,            // ✅ HTTPS-only
+      sameSite: 'None',        // Required for cross-site cookies in HTTPS
       maxAge: 12 * 60 * 60 * 1000
     });
 
@@ -117,4 +119,10 @@ async function login(req, res) {
   }
 }
 
-module.exports = { register, activate, login };
+// --- Logout ---
+async function logout(req, res) {
+  res.clearCookie('token');
+  res.json({ success: true, message: 'Logged out successfully' });
+}
+
+module.exports = { register, activate, login, logout };
